@@ -1,0 +1,4 @@
+alpine_3.19
+rootfs
+trashdump
+!cmd/trashdump
