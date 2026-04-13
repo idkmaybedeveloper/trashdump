@@ -4,7 +4,7 @@ import (
 	"context"
 	"os"
 
-	"code.wejust.rest/lain/trashdump/internal/dump"
+	"github.com/idkmaybdeveloper/trashdump/internal/dump"
 	"github.com/spf13/cobra"
 )
 

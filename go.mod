@@ -1,9 +1,9 @@
-module code.wejust.rest/lain/trashdump
+module github.com/idkmaybdeveloper/trashdump
 
 go 1.26.2
 
 require (
-	github.com/google/go-containerregistry v0.21.4
+	github.com/google/go-containerregistry v0.21.5
 	github.com/spf13/cobra v1.10.2
 )
 
