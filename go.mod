@@ -1,4 +1,4 @@
-module github.com/idkmaybdeveloper/trashdump
+module github.com/idkmaybedeveloper/trashdump
 
 go 1.26.2
 

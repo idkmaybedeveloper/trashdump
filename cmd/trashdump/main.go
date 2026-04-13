@@ -4,7 +4,7 @@ import (
 	"context"
 	"os"
 
-	"github.com/idkmaybdeveloper/trashdump/internal/dump"
+	"github.com/idkmaybedeveloper/trashdump/internal/dump"
 	"github.com/spf13/cobra"
 )
 

@@ -13,7 +13,7 @@ $ trashdump -o ./rootfs -p linux/arm64 ghcr.io/some/image:latest
 ## install
 
 ```bash
-go install github.com/idkmaybdeveloper/trashdump@latest
+go install github.com/idkmaybedeveloper/trashdump/cmd/trashdump@latest
 ```
 
 ## how does it work?
