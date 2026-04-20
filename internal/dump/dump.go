@@ -90,7 +90,7 @@ func extractTar(ctx context.Context, r io.Reader, destDir string) error {
 
 		switch hdr.Typeflag {
 		case tar.TypeDir:
-			if err := os.MkdirAll(target, mode); err != nil {
+			if err := os.MkdirAll(target, mode|0700); err != nil {
 				return fmt.Errorf("mkdir %s: %w", target, err)
 			}
 
