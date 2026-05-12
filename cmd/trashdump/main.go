@@ -27,6 +27,7 @@ func main() {
 	cmd.Flags().StringVarP(&opts.Username, "username", "u", "", "registry username")
 	cmd.Flags().StringVarP(&opts.Password, "password", "P", "", "registry password")
 	cmd.Flags().BoolVar(&opts.Insecure, "insecure", false, "allow plain HTTP registries")
+	cmd.Flags().BoolVar(&opts.Layers, "layers", false, "extract each layer separately (recovers files deleted in later layers)")
 
 	if err := cmd.ExecuteContext(context.Background()); err != nil {
 		os.Exit(1)

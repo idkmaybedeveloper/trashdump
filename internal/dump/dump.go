@@ -24,6 +24,7 @@ type Options struct {
 	Username  string
 	Password  string
 	Insecure  bool
+	Layers    bool
 }
 
 func writeFile(path string, r io.Reader, mode os.FileMode) error {
@@ -170,6 +171,10 @@ func Dump(ctx context.Context, imageRef string, opts Options) error {
 
 	slog.Info("extracting rootfs", "output", outDir)
 
+	if opts.Layers {
+		return extractAllLayers(ctx, img, outDir)
+	}
+
 	/*
 	 * crane.Export assembles all layers into a single flat tar, applying
 	 * whiteout markers (.wh.* files) along the way - so the result is a
@@ -186,4 +191,53 @@ func Dump(ctx context.Context, imageRef string, opts Options) error {
 	err = extractTar(ctx, pr, outDir)
 	pr.CloseWithError(err)
 	return err
+}
+
+func extractAllLayers(ctx context.Context, img v1.Image, outDir string) error {
+	layers, err := img.Layers()
+	if err != nil {
+		return fmt.Errorf("list layers: %w", err)
+	}
+
+	cfg, _ := img.ConfigFile()
+
+	for i, layer := range layers {
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+
+		digest, err := layer.Digest()
+		if err != nil {
+			return fmt.Errorf("layer %d digest: %w", i, err)
+		}
+
+		layerDir := filepath.Join(outDir, fmt.Sprintf("layer_%03d", i))
+		if err := os.MkdirAll(layerDir, 0755); err != nil {
+			return fmt.Errorf("mkdir layer dir: %w", err)
+		}
+
+		logAttrs := []any{"index", i, "digest", digest.String()[:19]}
+		if cfg != nil && i < len(cfg.History) {
+			h := cfg.History[i]
+			cmd := h.CreatedBy
+			if len(cmd) > 80 {
+				cmd = cmd[:80] + "..."
+			}
+			logAttrs = append(logAttrs, "cmd", cmd)
+		}
+		slog.Info("extracting layer", logAttrs...)
+
+		rc, err := layer.Uncompressed()
+		if err != nil {
+			return fmt.Errorf("layer %d open: %w", i, err)
+		}
+
+		err = extractTar(ctx, rc, layerDir)
+		rc.Close()
+		if err != nil {
+			return fmt.Errorf("layer %d extract: %w", i, err)
+		}
+	}
+
+	return nil
 }
